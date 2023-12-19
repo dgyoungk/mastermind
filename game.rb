@@ -39,6 +39,10 @@ class Game
     end
   end
 
+  def over?()
+    self.feedback.all? { |k, v | v == 'black' }
+  end
+
   def designate_player(role, player_name)
     # 1 indicates that the player wants to be the codebreaker
     if role == 1

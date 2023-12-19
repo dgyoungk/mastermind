@@ -22,7 +22,7 @@ module Playable
   def start_game(game)
     game.player_rules_msg()
     # change the condition into 12 after testing is done
-    while game.turns < 2
+    until game.turns == 12
       game.turns_msg(game.turns)
       start_match()
       compare_guess(game)
