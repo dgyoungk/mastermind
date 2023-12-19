@@ -41,11 +41,10 @@ module Displayable
     puts %(\nTurn #{turn})
   end
 
-  # to display when the player is codebreaker and is inputting their color combo
-
   # displays result of the comparison between guess and master code
-  def results_msg(feedback)
-
+  def turn_result_msg(results)
+    puts %(\nTurn #{results.turns} results:)
+    results.feedback.each { |k, v| puts %(#{k.to_s}: #{v}) }
   end
 
   def goodbye_msg
