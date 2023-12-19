@@ -1,3 +1,8 @@
+require './displayable.rb'
+require './playable.rb'
+require './mastermind.rb'
+require './codebreaker.rb'
+
 class Game
   include Playable
   include Displayable
@@ -27,7 +32,7 @@ class Game
       guess_color = gets.chomp.downcase
       until self.creator.color_options.include?(guess_color)
         puts %(That color is not an option, try again)
-        print %(Color at position #{idx + 1}: )
+        print %(Position #{idx + 1} color: )
         guess_color = gets.chomp.downcase
       end
       self.breaker.guess[k] = guess_color
