@@ -1,3 +1,6 @@
+require_relative 'displayable.rb'
+
+
 module Playable
 
   def compare_guess(match)
@@ -14,7 +17,6 @@ module Playable
       feedback
     end
     match.feedback = result
-
   end
 
   def start_game(game)
@@ -22,8 +24,9 @@ module Playable
     # change the condition into 12 after testing is done
     while game.turns < 2
       game.turns_msg(game.turns)
-      start_match(game)
+      start_match()
       compare_guess(game)
+      match.turn_result_msg(match)
       # after the guess is put in and the guess is compared, increment turns
       game.turns += 1
     end
