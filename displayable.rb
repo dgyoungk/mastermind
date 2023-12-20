@@ -1,7 +1,7 @@
 module Displayable
 
   def welcome_msg
-    puts %(Welcome, brave challenger. Push your wits to the limit with Mastermind!)
+    puts %(\nWelcome, brave challenger. Push your wits to the limit with Mastermind!)
   end
 
   def new_player_msg
@@ -47,6 +47,16 @@ module Displayable
     results.feedback.each { |k, v| puts %(#{k.to_s}: #{v}) }
   end
 
+  def match_finished_msg(match)
+    puts %(You win!!! Code broken in #{match.turns} turns)
+  end
+
+  def replay_msg
+    puts %(Would you like to play again? (Y/N))
+    print %(Choice: )
+  end
+
   def goodbye_msg
+    puts %(Thanks for playing, Ta-ta!)
   end
 end
