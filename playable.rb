@@ -22,14 +22,19 @@ module Playable
   def start_game(game)
     game.player_rules_msg()
     # change the condition into 12 after testing is done
-    until game.turns == 12
+    until game.turns > 12
       game.turns_msg(game.turns)
       start_match()
       compare_guess(game)
-      match.turn_result_msg(match)
-      # after the guess is put in and the guess is compared, increment turns
-      game.turns += 1
+      unless game.over?
+        game.turn_result_msg(game)
+        game.turns += 1
+      else
+        break
+      end
     end
+    game.match_finished_msg(game)
+    game.prompt_replay()
   end
 
   def start_match(match)
