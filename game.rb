@@ -40,7 +40,7 @@ class Game
   end
 
   def over?()
-    self.feedback.all? { |k, v | v == 'black' }
+    self.feedback.values.all? { |v| v == 'black' }
   end
 
   def designate_player(role, player_name)
