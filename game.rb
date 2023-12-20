@@ -43,6 +43,36 @@ class Game
     self.feedback.values.all? { |v| v == 'black' }
   end
 
+  def prompt_replay
+    replay_msg()
+    choice = gets.chomp.downcase
+    until choice == 'y' || choice == 'n'
+      puts %(That's not an option, try again)
+      replay_msg()
+      choice = gets.chomp.downcase
+    end
+    if choice == 'y'
+      reset_game()
+      setup_game()
+    else
+      goodbye_msg()
+    end
+  end
+
+  # things to reset: player roles, feedback, guess, master code, turns
+  def reset_game
+    self.turns = 1
+    self.feedback = {}
+    # resetting the values
+    self.creator.secret_code.map { |k, v| self.creator.secret_code[k] = '' }
+    self.breaker.guess.map { |k, v| self.breaker.guess[k] = '' }
+    # reset names
+    self.creator.name = ''
+    self.breaker.name = ''
+  end
+
+  private
+
   def designate_player(role, player_name)
     # 1 indicates that the player wants to be the codebreaker
     if role == 1
@@ -53,6 +83,4 @@ class Game
       self.creator = Mastermind.new(player_name)
     end
   end
-
-  private
 end
