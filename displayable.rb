@@ -35,6 +35,12 @@ module Displayable
 
   # when player is the Mastermind
   def computer_rules_msg
+    puts %(\nThe machine will now attempt to break your code)
+    puts %(Best of luck!)
+  end
+
+  def computing_msg()
+    puts %(\nCalculating... Meep Morp, Zeeep)
   end
 
   def turns_msg(turn)
@@ -47,8 +53,12 @@ module Displayable
     results.feedback.each { |k, v| puts %(#{k.to_s}: #{v}) }
   end
 
-  def match_finished_msg(match)
-    puts %(You win!!! Code broken in #{match.turns} turns)
+  def match_won_msg()
+    puts %(\nYou win!!!)
+  end
+
+  def match_lost_msg(match)
+    puts %(\nYou lose, the machine broke the code in #{match.turns} turns)
   end
 
   def replay_msg
