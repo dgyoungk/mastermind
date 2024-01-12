@@ -2,15 +2,19 @@ require './displayable.rb'
 require './playable.rb'
 require './mastermind.rb'
 require './codebreaker.rb'
+require './color.rb'
 
 class Game
   include Playable
   include Displayable
+  include Color
 
-  attr_accessor :turns, :breaker, :creator, :feedback
+  attr_accessor :turns, :breaker, :creator, :feedback, :color_nums, :color_options
   def initialize
-    self.turns = 1
+    self.turns = 0
     self.feedback = {}
+    self.color_nums = init_color_nums()
+    self.color_options = init_colors()
     setup_game()
   end
 
@@ -22,13 +26,26 @@ class Game
     role_selection = gets.chomp.to_i
     designate_player(role_selection, player_name)
     # Playable method
-    start_game(self)
+    until role_selection == 1 || role_selection == 2
+      puts %(Please choose either 1 or 2)
+      choice_msg()
+      role_selection = gets.chomp.to_i
+    end
+    designate_player(role_selection, player_name)
+
+    if self.breaker.name == player_name
+      # Playable method
+      start_game(self)
+    else
+      # Playable method
+      setup_comp_game(self)
+    end
   end
 
   def start_match
     options_msg(self.creator.color_options)
     self.breaker.guess.each_with_index do |(k, v), idx|
-      print %(Color at position #{idx + 1}: )
+      print %(Position #{idx + 1} color: )
       guess_color = gets.chomp.downcase
       until self.creator.color_options.include?(guess_color)
         puts %(That color is not an option, try again)
@@ -61,7 +78,7 @@ class Game
 
   # things to reset: player roles, feedback, guess, master code, turns
   def reset_game
-    self.turns = 1
+    self.turns = 0
     self.feedback = {}
     # resetting the values
     self.creator.secret_code.map { |k, v| self.creator.secret_code[k] = '' }
