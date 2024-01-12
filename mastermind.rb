@@ -1,11 +1,10 @@
+require_relative 'color.rb'
+
 class Mastermind
   include Displayable
+  include Color
 
   attr_accessor :name, :color_options, :secret_code
-
-  # constructor to be used when the player wants to be the mastermind
-  def initialize
-  end
 
   # constructor to be used when the computer is the mastermind
   def initialize(name = "Computer")
@@ -16,23 +15,18 @@ class Mastermind
       pos3: '',
       pos4: ''
     }
-    init_colors()
+    self.color_options = init_colors()
     if name == 'Computer'
       compute_secret()
     else
       generate_secret()
     end
-
-  end
-
-  def init_colors
-    self.color_options = %w(green blue red purple)
   end
 
   def compute_secret
     colors_shuffled = color_options.shuffle
     secret_code.each_with_index do |(k, v), idx|
-      secret_code[k] = colors_shuffled[idx]
+      self.secret_code[k] = colors_shuffled[idx]
     end
   end
 
@@ -49,10 +43,5 @@ class Mastermind
       end
       self.secret_code[k] = color_choice
     end
-  end
-
-  # for debugging
-  def to_s
-    %(#{self.name}, #{self.secret_code})
   end
 end
