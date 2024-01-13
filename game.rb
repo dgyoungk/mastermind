@@ -3,11 +3,13 @@ require './playable.rb'
 require './mastermind.rb'
 require './codebreaker.rb'
 require './color.rb'
+require_relative 'solvable.rb'
 
 class Game
   include Playable
   include Displayable
   include Color
+  include Solvable
 
   attr_accessor :turns, :breaker, :creator, :feedback, :color_nums, :color_options
   def initialize

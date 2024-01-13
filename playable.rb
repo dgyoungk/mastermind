@@ -62,61 +62,32 @@ module Playable
 
   def start_comp_game(match)
     # converting the color names to their numerical counterparts
-   answer_arr = match.creator.secret_code.values.map { |v| v = match.color_nums[v.to_sym] }
-   guess_arr = match.breaker.guess.values.map { |v| v = match.color_nums[v.to_sym] }
-   until match.turns > 12 || match.feedback.values == %w(black black black black)
-     match.turns += 1
-     match.computing_msg()
-     sleep(2)
-
-     feedback_arr = comp_compare(answer_arr, guess_arr)
-     match.feedback = convert_to_hash(feedback_arr)
-     match.turn_result_msg(match)
-     update_guess(match, guess_arr)
-   end
-   if match.feedback.values == %w(black black black black)
-     match.match_lost_msg(match)
-   else
-     match.match_won_msg
-   end
-   match.prompt_replay
-  end
-
-  def comp_compare(answer, guess)
-    comparison = []
-
-    guess.each_with_index do |value, index|
-      if answer.include?(value)
-        if guess[index] == answer[index]
-          comparison.push('black')
-        else
-          comparison.push('white')
-        end
-      else
-        comparison.push('none')
-      end
+    until match.turns == 12 || match.feedback.values == %w(black black black black)
+      match.turns += 1
+      match.computing_msg()
+      match.compare_guess(match)
+      match.turn_result_msg(match)
+      match.update_guess(match)
     end
-    comparison
-  end
-
-  def update_guess(game, guess)
-    compare_results = game.feedback.values
-    compare_results.each_with_index do |value, idx|
-      if value == 'white' || value == 'none'
-        new_color = game.color_options.sample.to_sym
-        until guess[idx] != game.color_nums[new_color]
-          new_color = game.color_options.sample.to_sym
-        end
-        guess[idx] = game.color_nums[new_color]
-      else
-        guess[idx] = guess[idx]
-      end
+    if match.feedback.values == %w(black black black black)
+      match.match_lost_msg(match)
+    else
+      match.match_won_msg
     end
+    match.prompt_replay
   end
 
   def convert_to_hash(array)
     arr_2d = array.map.with_index { |v, idx| v = ["pos#{idx + 1}".to_sym, v]}
     return arr_2d.to_h
+  end
+
+  def get_guess(match)
+    return match.breaker.guess.values.map { |v| v = match.color_nums[v.to_sym] }
+  end
+
+  def get_answer(match)
+    return match.creator.secret_code.values.map { |v| v = match.color_nums[v.to_sym] }
   end
 
 end
