@@ -5,20 +5,38 @@ module Solvable
     answer_code = game.get_answer(game)
     guesses = get_codes
     base_feedback = get_feedback(guess_code, answer_code)
+    feedback_count = get_feedback_counts(base_feedback)
 
-    filtered_guesses = guesses.select do |guess|
-      get_feedback(guess.digits.reverse, guess_code) == base_feedback
+    if game.turns == 1
+      game.candidates = guesses
+      filtered_guesses = game.candidates.select do |guess|
+        get_feedback_counts(get_feedback(guess_code, guess.digits.reverse)) == feedback_count
+      end
+      best_guess = get_next_guess(filter_scores(get_feedback_scores(guesses, guesses.dup)), filtered_guesses).digits.reverse
+      filtered_guesses.delete_if { |guess| guess.digits.reverse == guess_code }
+
+      next_guess = convert_to_hash(best_guess)
+      next_guess.each do |k, v|
+        next_guess[k] = game.color_nums.key(v).to_s
+      end
+
+      game.breaker.guess = next_guess
+    else
+      filtered_guesses = game.candidates.select do |guess|
+        get_feedback_counts(get_feedback(guess_code, guess.digits.reverse)) == feedback_count
+      end
+      best_guess = get_next_guess(filter_scores(get_feedback_scores(guesses, guesses.dup)), filtered_guesses).digits.reverse
+      filtered_guesses.delete_if { |guess| guess.digits.reverse == guess_code }
+
+      next_guess = convert_to_hash(best_guess)
+      next_guess.each do |k, v|
+        next_guess[k] = game.color_nums.key(v).to_s
+      end
+
+      game.breaker.guess = next_guess
     end
 
-    best_guesses = get_best_guesses(filter_scores(get_feedback_scores(guesses, guesses.dup)), filtered_guesses)
-
-    next_guess = convert_to_hash(best_guesses.first.digits.reverse)
-
-    next_guess.each do |k, v|
-      next_guess[k] = game.color_nums.key(v).to_s
-    end
-
-    game.breaker.guess = next_guess
+    game.candidates = filtered_guesses
   end
 
   def get_codes()
@@ -49,11 +67,9 @@ module Solvable
   end
 
   # selecting all the min max scores that are included in the filtered out pool
-  def get_best_guesses(min_scores, candidates)
-    min_score_guesses = min_scores.map { |pair| pair = pair.first }
-    ideal_guesses = min_score_guesses.select { |combi, score| candidates.include?(combi) }
-    return min_score_guesses if ideal_guesses.empty?
-    ideal_guesses
+  def get_next_guess(min_scores, candidates)
+    next_guess = min_scores.each { |guess, score| return guess if candidates.include?(guess) }
+    min_scores.first.first
   end
 
   def compare_guess(match)
@@ -64,18 +80,31 @@ module Solvable
   end
 
   def get_feedback(guess, answer)
-    comparison = guess.reduce([]) do |arr, item|
+    comparison = guess.each_with_index.reduce([]) do |arr, (item, idx)|
       if answer.include?(item)
-        if guess.index(item) == answer.index(item)
+        if answer[idx] == guess[idx]
           arr.push('black')
         else
           arr.push('white')
         end
       else
-        arr << 'none'
+        arr.push('none')
       end
       arr
     end
-    comparison
+  end
+
+  def get_feedback_counts(feedback)
+    counts = feedback.each.with_object(Hash.new(0)) do |outcome, hash|
+      hash[outcome] += 1
+      unless feedback.include?('black')
+        hash['black'] = 0
+      end
+      unless feedback.include?('white')
+        hash['white'] = 0
+      end
+    end
+    counts.reject! { |k, v| k == 'none' }
+    counts.values
   end
 end

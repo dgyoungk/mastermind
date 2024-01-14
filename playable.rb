@@ -1,24 +1,22 @@
 require_relative 'displayable.rb'
 
-
 module Playable
 
-  def compare_guess(match)
-    guess = match.breaker.guess
-    secret = match.creator.secret_code
-    result = guess.reduce(Hash.new()) do |feedback, (k, v)|
-      if secret.has_value?(guess[k]) == false
-        feedback[k] = 'none'
-      elsif guess[k] != secret[k] && secret.has_value?(guess[k])
-        feedback[k] = 'white'
-      elsif guess[k] == secret[k]
-        feedback[k] = 'black'
+  def start_match(match)
+    options_msg(match.creator.color_options)
+    match.breaker.guess.each_with_index do |(k, v), idx|
+      print %(Color at position #{idx + 1}: )
+      guess_color = gets.chomp.downcase
+      until match.creator.color_options.include?(guess_color)
+        puts %(That color is not an option, try again)
+        print %(Color at position #{idx + 1}: )
+        guess_color = gets.chomp.downcase
       end
-      feedback
+      match.breaker.guess[k] = guess_color
     end
-    match.feedback = result
   end
 
+  # when player is the codebreaker
   def start_game(game)
     game.player_rules_msg()
     # change the condition into 12 after testing is done
@@ -37,31 +35,14 @@ module Playable
     game.prompt_replay()
   end
 
-  def start_match(match)
-    options_msg(match.creator.color_options)
-    match.breaker.guess.each_with_index do |(k, v), idx|
-      print %(Color at position #{idx + 1}: )
-      guess_color = gets.chomp.downcase
-      until match.creator.color_options.include?(guess_color)
-        puts %(That color is not an option, try again)
-        print %(Color at position #{idx + 1}: )
-        guess_color = gets.chomp.downcase
-      end
-      match.breaker.guess[k] = guess_color
-    end
-  end
-
   def setup_comp_game(game)
-    # put display message detailing what will happen if the computer is the guesser
-    # add a method in the Displayable module
-    # remove the comment when the method is written: (computer_rules_msg())
     game.computer_rules_msg()
     # start_comp_game method will play out the game until the code is broken or 12 turns is reached
     start_comp_game(game)
   end
 
   def start_comp_game(match)
-    # converting the color names to their numerical counterparts
+     # converting the color names to their numerical counterparts
     until match.turns == 12 || match.feedback.values == %w(black black black black)
       match.turns += 1
       match.computing_msg()
@@ -89,5 +70,4 @@ module Playable
   def get_answer(match)
     return match.creator.secret_code.values.map { |v| v = match.color_nums[v.to_sym] }
   end
-
 end
