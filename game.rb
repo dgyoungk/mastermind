@@ -11,12 +11,13 @@ class Game
   include Color
   include Solvable
 
-  attr_accessor :turns, :breaker, :creator, :feedback, :color_nums, :color_options
+  attr_accessor :turns, :breaker, :creator, :feedback, :color_nums, :color_options, :candidates
   def initialize
     self.turns = 0
     self.feedback = {}
     self.color_nums = init_color_nums()
     self.color_options = init_colors()
+    self.candidates = []
     setup_game()
   end
 
@@ -26,8 +27,6 @@ class Game
     player_name = gets.chomp
     choice_msg()
     role_selection = gets.chomp.to_i
-    designate_player(role_selection, player_name)
-    # Playable method
     until role_selection == 1 || role_selection == 2
       puts %(Please choose either 1 or 2)
       choice_msg()
@@ -46,6 +45,7 @@ class Game
 
   def start_match
     options_msg(self.creator.color_options)
+
     self.breaker.guess.each_with_index do |(k, v), idx|
       print %(Position #{idx + 1} color: )
       guess_color = gets.chomp.downcase
@@ -66,19 +66,18 @@ class Game
     replay_msg()
     choice = gets.chomp.downcase
     until choice == 'y' || choice == 'n'
-      puts %(That's not an option, try again)
+      puts %(\nThat's not an option, try again)
       replay_msg()
       choice = gets.chomp.downcase
     end
     if choice == 'y'
       reset_game()
-      setup_game()
+      replay = Game.new
     else
       goodbye_msg()
     end
   end
 
-  # things to reset: player roles, feedback, guess, master code, turns
   def reset_game
     self.turns = 0
     self.feedback = {}
@@ -88,6 +87,7 @@ class Game
     # reset names
     self.creator.name = ''
     self.breaker.name = ''
+    self.candidates = []
   end
 
   private
@@ -97,6 +97,7 @@ class Game
     if role == 1
       self.breaker = Codebreaker.new(player_name)
       self.creator = Mastermind.new
+
     else
       self.breaker = Codebreaker.new
       self.creator = Mastermind.new(player_name)

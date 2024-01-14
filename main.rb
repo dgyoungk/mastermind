@@ -1,3 +1,3 @@
 require_relative 'game.rb'
 
-test = Game.new()
+mastermind = Game.new()
