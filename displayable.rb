@@ -28,7 +28,7 @@ module Displayable
   def player_rules_msg
     puts %(\nYou will have 12 tries to guess the Mastermind's color combination)
     puts %(With each try, you will receive a feedback on the color and its place:)
-    feedback_label = %(|Black: right color, right place | White: right color, wrong place | None: wrong color).upcase
+    feedback_label = %(Black: right color, right place | White: right color, wrong place | None: wrong color).upcase
     puts feedback_label
     puts %(Use the feedback to help you solve the code, good luck!)
   end
@@ -62,11 +62,11 @@ module Displayable
   end
 
   def replay_msg
-    puts %(Would you like to play again? (Y/N))
+    puts %(\nWould you like to play again? (Y/N))
     print %(Choice: )
   end
 
   def goodbye_msg
-    puts %(Thanks for playing, Ta-ta!)
+    puts %(\nThanks for playing, Ta-ta!)
   end
 end
