@@ -1,9 +1,9 @@
-require './displayable.rb'
-require './playable.rb'
-require './mastermind.rb'
-require './codebreaker.rb'
-require './color.rb'
-require_relative 'solvable.rb'
+require_relative 'color.rb'
+require_relative 'mastermind.rb'
+require_relative 'codebreaker.rb'
+require_relative 'modules/displayable.rb'
+require_relative 'modules/playable.rb'
+require_relative 'modules/solvable.rb'
 
 class Game
   include Playable

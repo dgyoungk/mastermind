@@ -1,4 +1,5 @@
 require_relative 'color.rb'
+require_relative 'modules/displayable.rb'
 
 class Mastermind
   include Displayable
